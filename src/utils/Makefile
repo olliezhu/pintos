@@ -2,7 +2,8 @@ all: setitimer-helper squish-pty squish-unix
 
 CC = gcc
 CFLAGS = -Wall -W
-LDFLAGS = -lm
+# Should have -lm in LDLIBS rather than LDFLAGS
+LDLIBS = -lm
 setitimer-helper: setitimer-helper.o
 squish-pty: squish-pty.o
 squish-unix: squish-unix.o
