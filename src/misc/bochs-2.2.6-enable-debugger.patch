@@ -1,0 +1,12 @@
+Index: bochs-2.2.6/bx_debug/symbols.cc
+diff -u bochs-2.2.6/bx_debug/symbols.cc\~ bochs-2.2.6/bx_debug/symbols.cc
+--- bochs-2.2.6/bx_debug/symbols.cc~	2014-03-09 00:37:20.000000000 -0800
++++ bochs-2.2.6/bx_debug/symbols.cc	2014-03-09 00:37:21.000000000 -0800
+@@ -92,6 +92,7 @@
+ #endif
+ 
+ using namespace std;
++using namespace __gnu_cxx;
+ 
+ struct symbol_entry_t
+ {
