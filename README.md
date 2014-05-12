@@ -11,3 +11,4 @@ Notes
 * http://wiki.qemu.org/Manual
 * https://en.wikibooks.org/wiki/QEMU
 * http://bochs.sourceforge.net/
+* http://www.intel.com/content/www/us/en/processors/architectures-software-developer-manuals.html
