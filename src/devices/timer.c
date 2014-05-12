@@ -84,6 +84,36 @@ timer_elapsed (int64_t then)
   return timer_ticks () - then;
 }
 
+/* Set an alarm for sleeping thread */
+void
+set_alarm (int64_t wake_tick)
+{
+  struct thread *t = thread_current();
+  struct alarm *a = &t->alarm;
+  enum intr_level old_level;
+
+  ASSERT(t->status == THREAD_RUNNING);
+  a->thread = t;
+  a->wake_tick = wake_tick;
+
+  old_level = intr_disable ();
+  list_push_back (&alarm_list, &a->elem);
+  thread_block ();
+  intr_set_level (old_level);
+}
+
+/* */
+void
+alarm_off (struct alarm *a)
+{
+  enum intr_level old_level;
+
+  old_level = intr_disable ();
+  list_remove (&a->elem);
+  thread_unblock (a->thread);
+  intr_set_level (old_level);
+}
+
 /* Sleeps for approximately TICKS timer ticks.  Interrupts must
    be turned on. */
 void
@@ -92,11 +122,14 @@ timer_sleep (int64_t ticks)
   int64_t start = timer_ticks ();
 
   ASSERT (intr_get_level () == INTR_ON);
-#if 1
+#if 0
   while (timer_elapsed (start) < ticks) 
     thread_yield ();
 #else
-  alarm();
+  if (ticks == 0)
+    return;
+  else
+    set_alarm (start + ticks);
 #endif
 }
 
@@ -174,8 +207,21 @@ timer_print_stats (void)
 static void
 timer_interrupt (struct intr_frame *args UNUSED)
 {
+  struct list_elem *e;
+  struct alarm *a;
+
   ticks++;
   thread_tick ();
+
+  for (e = list_begin (&alarm_list); e != list_end (&alarm_list);
+       e = list_next (e))
+    {
+      a = list_entry (e, struct alarm, elem);
+      if (timer_ticks () >= a->wake_tick)
+        alarm_off (a);
+      //else
+        //break;
+    }
 }
 
 /* Returns true if LOOPS iterations waits for more than one timer

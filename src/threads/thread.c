@@ -28,6 +28,10 @@ static struct list ready_list;
    when they are first scheduled and removed when they exit. */
 static struct list all_list;
 
+/* List of all active alarms, that is, sleeping threads blocked
+   for a given number of timer ticks. */
+//static struct list alarm_list;//XXX
+
 /* Idle thread. */
 static struct thread *idle_thread;
 
@@ -92,6 +96,7 @@ thread_init (void)
   lock_init (&tid_lock);
   list_init (&ready_list);
   list_init (&all_list);
+  list_init (&alarm_list);
 
   /* Set up a thread structure for the running thread. */
   initial_thread = running_thread ();
